@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>สั่งซื้อสินค้า | วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่</title>
+  <meta name="description" content="ร้านค้าออนไลน์ของวิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่ ผลิตภัณฑ์จากชุมชน ส่งตรงจาก ต.ปุโรง อ.กรงปินัง จ.ยะลา">
+  <meta name="theme-color" content="#1c3a26">
+  <meta property="og:title" content="วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่">
+  <meta property="og:description" content="ผลิตภัณฑ์จากชุมชน ส่งตรงจาก ต.ปุโรง อ.กรงปินัง จ.ยะลา">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=3">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container" aria-label="เมนูหลัก">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.svg" alt="" width="38" height="38">
+      <span class="brand-text">วิสาหกิจชุมชน<small>ปลูกพืชพลังงานและแปรรูปไม้ไผ่</small></span>
+    </a>
+    <ul class="nav-menu" id="navMenu">
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="products.html">สินค้า</a></li>
+      <li><a href="index.html#about">เกี่ยวกับเรา</a></li>
+      <li><a href="index.html#contact">ติดต่อ</a></li>
+    </ul>
+    <a href="login.html" class="account-link" data-account-link aria-label="Log In">👤 <span class="account-label">Log In</span></a>
+    <a href="cart.html" class="cart-link" aria-label="ตะกร้าสินค้า">🛒 <span class="cart-label">ตะกร้า</span><span class="cart-badge" data-cart-count hidden>0</span></a>
+    <button class="nav-toggle" type="button" aria-label="เปิดเมนู" aria-expanded="false" aria-controls="navMenu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<main class="container page">
+  <div id="checkoutView">
+    <div class="page-head">
+      <div class="breadcrumb"><a href="index.html">หน้าแรก</a> / <a href="cart.html">ตะกร้า</a> / สั่งซื้อ</div>
+      <h1>ข้อมูลการสั่งซื้อ</h1>
+      <p>กรอกข้อมูลสำหรับจัดส่งแล้วกดยืนยัน ติดตามสถานะได้ที่หน้า "คำสั่งซื้อของฉัน"</p>
+    </div>
+    <div id="checkoutNotes"></div>
+    <div class="checkout-layout">
+      <form class="panel" id="checkoutForm" novalidate>
+        <h2>ข้อมูลผู้สั่งซื้อ</h2>
+        <div class="field">
+          <label for="customer_name">ชื่อ-นามสกุล <span class="req">*</span></label>
+          <input id="customer_name" name="customer_name" type="text" autocomplete="name" maxlength="150" required>
+          <div class="field-error"></div>
+        </div>
+        <div class="field">
+          <label for="phone">เบอร์โทรศัพท์ <span class="req">*</span></label>
+          <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="08x-xxx-xxxx" required>
+          <div class="field-error"></div>
+        </div>
+        <div class="field">
+          <label for="address">ที่อยู่สำหรับจัดส่ง <span class="req">*</span></label>
+          <textarea id="address" name="address" autocomplete="street-address" maxlength="1000" placeholder="บ้านเลขที่ หมู่ ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์" required></textarea>
+          <div class="field-error"></div>
+        </div>
+        <div class="field">
+          <label for="note">รายละเอียดเพิ่มเติม</label>
+          <textarea id="note" name="note" maxlength="1000" placeholder="เช่น เวลาที่สะดวกรับของ หรือจุดสังเกต"></textarea>
+          <div class="field-hint">ไม่บังคับ</div>
+        </div>
+        <div id="checkoutError" hidden></div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitOrder">ยืนยันการสั่งซื้อ</button>
+        <p class="field-hint center" style="margin-top:10px">หลังสั่งซื้อ ทางร้านจะติดต่อกลับเพื่อยืนยันคำสั่งซื้อและการชำระเงิน</p>
+      </form>
+      <aside class="panel sticky-col" id="orderSummary"><div class="loading">กำลังโหลด...</div></aside>
+    </div>
+  </div>
+
+  <section id="successView" class="panel success-card" hidden>
+    <div class="success-icon">✓</div>
+    <h1>สั่งซื้อสำเร็จ</h1>
+    <p class="muted">ขอบคุณที่สนับสนุนสินค้าชุมชน ทางร้านจะติดต่อกลับโดยเร็ว</p>
+    <dl class="order-info">
+      <div><dt>เลขคำสั่งซื้อ</dt><dd class="order-no"><span id="successOrderNo" class="mono"></span>
+        <button type="button" class="btn-link" id="copyOrderNo">คัดลอก</button></dd></div>
+      <div><dt>ยอดรวม</dt><dd id="successTotal"></dd></div>
+      <div><dt>สถานะ</dt><dd id="successStatus"></dd></div>
+    </dl>
+    <p class="field-hint">กรุณาแจ้งเลขคำสั่งซื้อเมื่อติดต่อร้านทาง LINE</p>
+    <div class="success-actions">
+      <a href="my-orders.html" class="btn btn-primary btn-lg btn-block">📦 ติดตามสถานะคำสั่งซื้อ</a>
+      <a href="#" class="btn btn-line btn-lg btn-block" data-line-link>💬 ติดต่อร้านผ่าน LINE</a>
+      <a href="products.html" class="btn btn-ghost btn-block">เลือกซื้อสินค้าต่อ</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h3>วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่</h3>
+        <p>ต.ปุโรง อ.กรงปินัง จ.ยะลา</p>
+      </div>
+      <div>
+        <h3>เมนู</h3>
+        <ul>
+          <li><a href="products.html">สินค้า</a></li>
+          <li><a href="cart.html">ตะกร้าสินค้า</a></li>
+          <li><a href="index.html#about">เกี่ยวกับเรา</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>ติดต่อ</h3>
+        <ul>
+          <li><a href="#" data-line-link>LINE: 141414dw</a></li>
+          <li><a href="#" data-facebook-link>Facebook</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© <span data-year></span> วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่</div>
+  </div>
+</footer>
+
+<a class="line-float" href="https://line.me/ti/p/~141414dw" data-line-link aria-label="สอบถามสินค้าทาง LINE">
+  <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#fff" d="M16 4C8.8 4 3 8.7 3 14.5c0 5.2 4.6 9.5 10.8 10.4.4.1 1 .3 1.2.6.1.3.1.8 0 1.1l-.2 1.1c-.1.3-.3 1.3 1.1.7 1.4-.6 7.7-4.5 10.5-7.8C28.3 18.4 29 16.5 29 14.5 29 8.7 23.2 4 16 4z"/><path fill="#06c755" d="M10 12h1.6v4.6H14V18h-4zM15 12h1.6v6H15zM18 12h1.5l2.3 3.4V12h1.5v6h-1.4l-2.4-3.5V18H18zM24.5 12H28v1.4h-2v.9h2v1.4h-2v.9h2V18h-3.5z"/></svg>
+  สอบถามสินค้า
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js?v=6"></script>
+<script src="js/cart.js?v=3"></script>
+<script src="js/checkout.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#1c3a26">
+  <title>จัดการสินค้า | หลังร้าน</title>
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css?v=3">
+  <link rel="stylesheet" href="../css/admin.css?v=3">
+</head>
+<body class="admin" data-page="products">
+
+<div class="admin-loading" id="adminLoading">กำลังตรวจสอบสิทธิ์...</div>
+
+<div id="adminShell" hidden>
+  <aside class="admin-sidebar" id="adminSidebar" aria-label="เมนูหลังร้าน">
+    <div class="side-brand"><img src="../assets/logo.svg" alt=""><span>หลังร้าน<br><small>วิสาหกิจชุมชนไม้ไผ่</small></span></div>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="products.html" class="active" aria-current="page">📦 จัดการสินค้า</a>
+    <a href="categories.html">🏷️ หมวดหมู่</a>
+    <a href="orders.html">🛒 คำสั่งซื้อ</a>
+    <a href="../index.html" target="_blank" rel="noopener">🏪 ดูหน้าร้าน</a>
+    <div class="side-spacer"></div>
+    <button type="button" class="logout" id="logoutBtn">🚪 ออกจากระบบ</button>
+  </aside>
+  <div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
+
+  <header class="admin-topbar">
+    <button type="button" class="admin-menu-btn" id="adminMenuBtn" aria-label="เปิดเมนู">☰</button>
+    <a class="brand-mini" href="dashboard.html"><img src="../assets/logo.svg" alt="">หลังร้าน</a>
+    <span class="admin-user" id="adminEmail"></span>
+  </header>
+
+  <main class="admin-main">
+
+    <div class="admin-head">
+      <div><h1>จัดการสินค้า</h1><p id="productCount">กำลังโหลด...</p></div>
+      <button type="button" class="btn btn-primary" id="addProductBtn">➕ เพิ่มสินค้า</button>
+    </div>
+
+    <div class="toolbar">
+      <input type="search" class="search-input" id="productSearch" placeholder="ค้นหาชื่อสินค้าหรือหมวดหมู่..." aria-label="ค้นหาสินค้า">
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>สินค้า</th><th class="num">ราคา</th><th>Stock (จำนวนคงเหลือ)</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+        <tbody id="productTable"><tr><td colspan="5" class="muted center">กำลังโหลด...</td></tr></tbody>
+      </table>
+    </div>
+
+    <dialog class="modal" id="productDialog" aria-labelledby="dialogTitle">
+      <form id="productForm" method="dialog" novalidate>
+        <div class="modal-head">
+          <h2 id="dialogTitle">➕ เพิ่มสินค้า</h2>
+          <button type="button" class="modal-close" aria-label="ปิด" onclick="this.closest('dialog').close()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="field">
+            <label for="f_name">ชื่อสินค้า <span class="req">*</span></label>
+            <input id="f_name" name="product_name" type="text" maxlength="200" required>
+          </div>
+          <div class="field">
+            <label for="f_desc">รายละเอียด</label>
+            <textarea id="f_desc" name="description" maxlength="2000"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="f_price">ราคา (บาท) <span class="req">*</span></label>
+              <input id="f_price" name="price" type="number" min="0" step="0.01" inputmode="decimal" required>
+            </div>
+            <div class="field">
+              <label for="f_stock">จำนวนสินค้า (Stock) <span class="req">*</span></label>
+              <input id="f_stock" name="stock_quantity" type="number" min="0" step="1" inputmode="numeric" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="f_cat">หมวดหมู่</label>
+              <select id="f_cat" name="category"></select>
+            </div>
+            <div class="field">
+              <label for="f_active">สถานะ</label>
+              <select id="f_active" name="is_active">
+                <option value="true">เปิดขาย</option>
+                <option value="false">ปิดการขาย (ซ่อนจากหน้าร้าน)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f_image">รูปสินค้า</label>
+            <div class="image-field">
+              <img id="imagePreview" alt="ตัวอย่างรูปสินค้า">
+              <div>
+                <input id="f_image" name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+                <div class="field-hint">JPG / PNG / WEBP / GIF — ระบบย่อรูปให้อัตโนมัติ</div>
+                <label class="check-inline" id="removeImageWrap" hidden><input type="checkbox" name="remove_image"> ลบรูปปัจจุบัน</label>
+              </div>
+            </div>
+          </div>
+          <div class="notice notice-error" id="formError" hidden></div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" id="cancelDialog">ยกเลิก</button>
+          <button type="submit" class="btn btn-primary" id="saveProductBtn">บันทึกสินค้า</button>
+        </div>
+      </form>
+    </dialog>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js?v=6"></script>
+<script src="../js/admin.js?v=3"></script>
+</body>
+</html>

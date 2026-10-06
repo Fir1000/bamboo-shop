@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่ | ต.ปุโรง จ.ยะลา</title>
+  <meta name="description" content="ร้านค้าออนไลน์ของวิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่ ผลิตภัณฑ์จากชุมชน ส่งตรงจาก ต.ปุโรง อ.กรงปินัง จ.ยะลา">
+  <meta name="theme-color" content="#1c3a26">
+  <meta property="og:title" content="วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่">
+  <meta property="og:description" content="ผลิตภัณฑ์จากชุมชน ส่งตรงจาก ต.ปุโรง อ.กรงปินัง จ.ยะลา">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=3">
+  <link rel="stylesheet" href="css/product.css?v=3">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container" aria-label="เมนูหลัก">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.svg" alt="" width="38" height="38">
+      <span class="brand-text">วิสาหกิจชุมชน<small>ปลูกพืชพลังงานและแปรรูปไม้ไผ่</small></span>
+    </a>
+    <ul class="nav-menu" id="navMenu">
+      <li><a href="index.html" class="active">หน้าแรก</a></li>
+      <li><a href="products.html">สินค้า</a></li>
+      <li><a href="index.html#about">เกี่ยวกับเรา</a></li>
+      <li><a href="index.html#contact">ติดต่อ</a></li>
+    </ul>
+    <a href="login.html" class="account-link" data-account-link aria-label="Log In">👤 <span class="account-label">Log In</span></a>
+    <a href="cart.html" class="cart-link" aria-label="ตะกร้าสินค้า">🛒 <span class="cart-label">ตะกร้า</span><span class="cart-badge" data-cart-count hidden>0</span></a>
+    <button class="nav-toggle" type="button" aria-label="เปิดเมนู" aria-expanded="false" aria-controls="navMenu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <span class="hero-kicker">🌱 สินค้าชุมชน ปุโรง · กรงปินัง · ยะลา</span>
+      <h1>วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่</h1>
+      <p>ผลิตภัณฑ์จากชุมชน ส่งตรงจาก ต.ปุโรง อ.กรงปินัง จ.ยะลา</p>
+      <div class="hero-actions">
+        <a href="products.html" class="btn btn-primary btn-lg">เลือกซื้อสินค้า</a>
+        <a href="#" class="btn btn-ghost btn-lg" data-line-link>สอบถามทาง LINE</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">🎋</div>
+          <div><h3>ผลิตจากชุมชน</h3><p>ไม้ไผ่และพืชพลังงานคัดคุณภาพ แปรรูปโดยสมาชิกวิสาหกิจ</p></div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🤝</div>
+          <div><h3>สร้างรายได้ให้ท้องถิ่น</h3><p>ทุกการสั่งซื้อช่วยสนับสนุนครอบครัวในชุมชนปุโรง</p></div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📦</div>
+          <div><h3>สั่งง่าย ติดตามได้</h3><p>เข้าสู่ระบบแล้วสั่งซื้อ ดูสถานะคำสั่งซื้อได้ตลอดว่าถึงขั้นตอนไหน</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <div><span class="eyebrow">สินค้าแนะนำ</span><h2>สินค้าล่าสุดจากชุมชน</h2></div>
+        <a href="products.html" class="btn btn-ghost">ดูสินค้าทั้งหมด →</a>
+      </div>
+      <div class="product-grid featured" id="featuredGrid">
+        <div class="loading">กำลังโหลดสินค้า...</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="container about-grid">
+      <div>
+        <span class="eyebrow">เกี่ยวกับเรา</span>
+        <h2>จากสวนไผ่ในชุมชน สู่ผลิตภัณฑ์คุณภาพ</h2>
+        <p>วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่ ตั้งอยู่ที่ ต.ปุโรง อ.กรงปินัง จ.ยะลา
+          เป็นการรวมกลุ่มของคนในชุมชนเพื่อปลูกไม้ไผ่และพืชพลังงาน แล้วนำมาแปรรูปเป็นผลิตภัณฑ์ที่ใช้ได้จริงในชีวิตประจำวัน</p>
+        <p>เราตั้งใจสร้างรายได้ที่ยั่งยืนให้กับครอบครัวในชุมชน ควบคู่กับการดูแลทรัพยากรธรรมชาติในพื้นที่</p>
+        <a href="products.html" class="btn btn-primary">เลือกซื้อสินค้า</a>
+      </div>
+      <div class="about-card">
+        <div>
+          <img src="assets/logo.svg" alt="โลโก้วิสาหกิจชุมชน">
+          <h3>ปุโรง · กรงปินัง · ยะลา</h3>
+          <p class="muted" style="margin:0">ปลูก · แปรรูป · ส่งต่อด้วยใจ</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="contact">
+    <div class="container">
+      <div class="section-head"><div><span class="eyebrow">ติดต่อเรา</span><h2>สอบถามสินค้าได้ทุกช่องทาง</h2></div></div>
+      <div class="contact-grid">
+        <a class="contact-card" href="#" data-line-link>
+          <div class="feature-icon">💬</div>
+          <div><strong>LINE</strong><span>ID: 141414dw</span></div>
+        </a>
+        <a class="contact-card" href="#" data-facebook-link>
+          <div class="feature-icon">📘</div>
+          <div><strong>Facebook</strong><span>เพจวิสาหกิจชุมชน</span></div>
+        </a>
+        <a class="contact-card" href="https://www.google.com/maps/search/?api=1&query=%E0%B8%95.%E0%B8%9B%E0%B8%B8%E0%B9%82%E0%B8%A3%E0%B8%87+%E0%B8%AD.%E0%B8%81%E0%B8%A3%E0%B8%87%E0%B8%9B%E0%B8%B4%E0%B8%99%E0%B8%B1%E0%B8%87+%E0%B8%88.%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2" target="_blank" rel="noopener">
+          <div class="feature-icon">📍</div>
+          <div><strong>ที่ตั้ง</strong><span>ต.ปุโรง อ.กรงปินัง จ.ยะลา</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h3>วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่</h3>
+        <p>ต.ปุโรง อ.กรงปินัง จ.ยะลา</p>
+      </div>
+      <div>
+        <h3>เมนู</h3>
+        <ul>
+          <li><a href="products.html">สินค้า</a></li>
+          <li><a href="cart.html">ตะกร้าสินค้า</a></li>
+          <li><a href="index.html#about">เกี่ยวกับเรา</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>ติดต่อ</h3>
+        <ul>
+          <li><a href="#" data-line-link>LINE: 141414dw</a></li>
+          <li><a href="#" data-facebook-link>Facebook</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© <span data-year></span> วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่</div>
+  </div>
+</footer>
+
+<a href="cart.html" class="sticky-cart" id="stickyCart" hidden>
+  <span class="sc-info"><small data-sticky-count>0 ชิ้น</small><strong data-sticky-total>฿0</strong></span>
+  <span class="btn">ดูตะกร้า →</span>
+</a>
+
+<a class="line-float" href="https://line.me/ti/p/~141414dw" data-line-link aria-label="สอบถามสินค้าทาง LINE">
+  <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#fff" d="M16 4C8.8 4 3 8.7 3 14.5c0 5.2 4.6 9.5 10.8 10.4.4.1 1 .3 1.2.6.1.3.1.8 0 1.1l-.2 1.1c-.1.3-.3 1.3 1.1.7 1.4-.6 7.7-4.5 10.5-7.8C28.3 18.4 29 16.5 29 14.5 29 8.7 23.2 4 16 4z"/><path fill="#06c755" d="M10 12h1.6v4.6H14V18h-4zM15 12h1.6v6H15zM18 12h1.5l2.3 3.4V12h1.5v6h-1.4l-2.4-3.5V18H18zM24.5 12H28v1.4h-2v.9h2v1.4h-2v.9h2V18h-3.5z"/></svg>
+  สอบถามสินค้า
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js?v=6"></script>
+<script src="js/cart.js?v=3"></script>
+<script src="js/products.js?v=3"></script>
+</body>
+</html>

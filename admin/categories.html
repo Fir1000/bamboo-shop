@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#1c3a26">
+  <title>หมวดหมู่ | หลังร้าน</title>
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css?v=3">
+  <link rel="stylesheet" href="../css/admin.css?v=3">
+</head>
+<body class="admin" data-page="categories">
+
+<div class="admin-loading" id="adminLoading">กำลังตรวจสอบสิทธิ์...</div>
+
+<div id="adminShell" hidden>
+  <aside class="admin-sidebar" id="adminSidebar" aria-label="เมนูหลังร้าน">
+    <div class="side-brand"><img src="../assets/logo.svg" alt=""><span>หลังร้าน<br><small>วิสาหกิจชุมชนไม้ไผ่</small></span></div>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="products.html">📦 จัดการสินค้า</a>
+    <a href="categories.html" class="active" aria-current="page">🏷️ หมวดหมู่</a>
+    <a href="orders.html">🛒 คำสั่งซื้อ</a>
+    <a href="../index.html" target="_blank" rel="noopener">🏪 ดูหน้าร้าน</a>
+    <div class="side-spacer"></div>
+    <button type="button" class="logout" id="logoutBtn">🚪 ออกจากระบบ</button>
+  </aside>
+  <div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
+
+  <header class="admin-topbar">
+    <button type="button" class="admin-menu-btn" id="adminMenuBtn" aria-label="เปิดเมนู">☰</button>
+    <a class="brand-mini" href="dashboard.html"><img src="../assets/logo.svg" alt="">หลังร้าน</a>
+    <span class="admin-user" id="adminEmail"></span>
+  </header>
+
+  <main class="admin-main">
+
+    <div class="admin-head">
+      <div><h1>หมวดหมู่สินค้า</h1><p id="categoryCount">กำลังโหลด...</p></div>
+    </div>
+
+    <form class="toolbar" id="categoryForm" novalidate>
+      <input type="text" class="search-input" name="category_name" maxlength="60" placeholder="ชื่อหมวดหมู่ใหม่ เช่น เฟอร์นิเจอร์ไม้ไผ่" aria-label="ชื่อหมวดหมู่ใหม่">
+      <button type="submit" class="btn btn-primary">➕ เพิ่มหมวดหมู่</button>
+    </form>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>หมวดหมู่</th><th class="num">จำนวนสินค้า</th><th>จัดการ</th></tr></thead>
+        <tbody id="categoryTable"><tr><td colspan="3" class="muted center">กำลังโหลด...</td></tr></tbody>
+      </table>
+    </div>
+    <p class="toolbar-meta" style="margin-top:10px">เปลี่ยนชื่อหมวดหมู่ สินค้าในหมวดนั้นจะเปลี่ยนตามอัตโนมัติ · ลบได้เฉพาะหมวดที่ไม่มีสินค้า</p>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js?v=6"></script>
+<script src="../js/admin.js?v=3"></script>
+</body>
+</html>

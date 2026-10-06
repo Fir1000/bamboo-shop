@@ -196,3 +196,15 @@ dialog.modal::backdrop { background: rgba(20, 35, 25, .5); }
 .login-card h1 { text-align: center; font-size: 22px; margin-bottom: 4px; }
 .login-card .sub { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 20px; }
 .login-card .back { display: block; text-align: center; margin-top: 16px; font-size: 14px; }
+
+/* ---------- ปุ่มลอย: จัดการบัญชี (ล่างขวา) ---------- */
+.ledger-float {
+  position: fixed; right: 16px; bottom: 16px; z-index: 60;
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 52px; padding: 10px 20px; border-radius: 999px;
+  background: var(--green-700); color: #fff; text-decoration: none;
+  font: 600 15px var(--font-head); box-shadow: var(--shadow-lg);
+  transition: transform .15s, background .15s;
+}
+.ledger-float:hover { transform: translateY(-2px); background: var(--green-800); }
+.admin-main { padding-bottom: 96px; } /* เว้นที่ให้ปุ่มลอยไม่ทับเนื้อหาท้ายหน้า */

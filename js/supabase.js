@@ -172,7 +172,10 @@ async function initAccountLink() {
   const link = document.querySelector('[data-account-link]');
   if (!link) return;
   const label = link.querySelector('.account-label');
-  const set = (href, text) => { link.href = href; label.textContent = text; link.setAttribute('aria-label', text); };
+  const set = (href, text) => {
+    link.href = href; label.textContent = text; link.setAttribute('aria-label', text);
+    link.classList.toggle('is-short', text.length <= 8); // ข้อความสั้นแสดงบนมือถือได้
+  };
 
   const session = await Auth.session().catch(() => null);
   if (!session) { set(Auth.loginUrl(), 'Log In'); return; }

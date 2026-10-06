@@ -103,7 +103,7 @@ code { background: var(--cream-2); padding: 1px 6px; border-radius: 6px; font-si
 .navbar { display: flex; align-items: center; gap: 12px; min-height: var(--header-h); position: relative; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--green-900); min-width: 0; margin-right: auto; }
 .brand img { width: 38px; height: 38px; flex: none; }
-.brand-text { font: 600 14px/1.25 var(--font-head); }
+.brand-text { font: 600 14px/1.25 var(--font-head); min-width: 0; overflow: hidden; }
 .brand-text small { display: block; font: 400 12px/1.3 var(--font); color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .nav-menu {
@@ -133,6 +133,7 @@ code { background: var(--cream-2); padding: 1px 6px; border-radius: 6px; font-si
 }
 .account-link:hover { background: var(--green-50); }
 .account-link .account-label { display: none; }
+.account-link.is-short .account-label { display: inline; }
 .cart-badge {
   min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px;
   background: var(--bamboo-100); color: var(--green-900);
@@ -147,6 +148,21 @@ code { background: var(--cream-2); padding: 1px 6px; border-radius: 6px; font-si
 .nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* มือถือจอแคบ: ลดช่องไฟ ซ่อนบรรทัดรอง ให้ปุ่มไม่ทับชื่อร้าน */
+@media (max-width: 480px) {
+  .navbar { gap: 6px; }
+  .brand { gap: 8px; }
+  .brand img { width: 34px; height: 34px; }
+  .brand-text { white-space: nowrap; text-overflow: ellipsis; }
+  .brand-text small { display: none; }
+  .account-link { padding: 8px 10px; font-size: 14px; }
+  .cart-link { padding: 8px 12px; }
+  .nav-toggle { width: 40px; }
+}
+@media (max-width: 340px) {
+  .account-link.is-short .account-label { display: none; }
+}
 
 @media (min-width: 900px) {
   .nav-toggle { display: none; }
@@ -184,6 +200,7 @@ code { background: var(--cream-2); padding: 1px 6px; border-radius: 6px; font-si
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .hero-actions .btn-ghost { color: #fff; border-color: rgba(255, 255, 255, .4); }
 .hero-actions .btn-ghost:hover { background: rgba(255, 255, 255, .1); }
+@media (max-width: 480px) { .hero-actions .btn { flex: 1 1 100%; } }
 .hero .btn-primary { background: var(--bamboo-100); color: var(--green-900); box-shadow: none; }
 .hero .btn-primary:hover { background: #fff; }
 

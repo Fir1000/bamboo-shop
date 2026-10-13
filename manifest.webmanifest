@@ -1,0 +1,18 @@
+{
+  "id": "./",
+  "name": "วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่",
+  "short_name": "ร้านไม้ไผ่ปุโรง",
+  "description": "ผลิตภัณฑ์จากชุมชน ส่งตรงจาก ต.ปุโรง อ.กรงปินัง จ.ยะลา",
+  "lang": "th",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf6ec",
+  "theme_color": "#1c3a26",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

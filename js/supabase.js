@@ -11,9 +11,9 @@ const SHOP = {
   name: 'วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่',
   location: 'ต.ปุโรง อ.กรงปินัง จ.ยะลา',
   lineId: '141414dw',
-  facebook: 'https://www.facebook.com/share/1C79rC3M53/',
+  facebook: 'https://www.facebook.com/share/1DzgU4Dign/',
   // ลิงก์แชท Messenger ของเพจ เช่น 'https://m.me/ชื่อผู้ใช้เพจ' (ว่างไว้ = เปิดหน้าเพจ Facebook แทน)
-  messenger: ''
+  messenger: 'https://m.me/61594881681695'
 };
 
 // ค่าเริ่มต้น — ถูกแทนที่ด้วยข้อมูลจากตาราง categories เมื่อเรียก loadCategories()

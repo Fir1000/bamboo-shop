@@ -175,6 +175,20 @@
     setTimeout(() => URL.revokeObjectURL(url), 60000);
   }
 
+  // ส่งรูปบิลเข้า LINE ร้านอัตโนมัติ: อัปโหลดรูป -> Edge Function notify-line ส่งต่อให้ LINE
+  async function notifyShop(order, blob) {
+    const session = await Auth.session();
+    if (!session) return;
+    if (blob) {
+      const path = `${session.user.id}/${order.order_number}.png`;
+      const { error: upErr } = await sb.storage.from('order-bills')
+        .upload(path, blob, { contentType: 'image/png', upsert: false });
+      if (upErr) console.warn('อัปโหลดรูปบิลไม่สำเร็จ (จะส่งเฉพาะข้อความ)', upErr);
+    }
+    const { error } = await sb.functions.invoke('notify-line', { body: { order_number: order.order_number } });
+    if (error) throw error;
+  }
+
   async function setupBill(order) {
     const sendBtn = document.getElementById('sendBill');
     const saveBtn = document.getElementById('saveBill');
@@ -190,9 +204,12 @@
     } catch (err) {
       console.error(err);
       sendBtn.hidden = saveBtn.hidden = true;
+      notifyShop(order, null).catch(e => console.warn('แจ้ง LINE ร้านไม่สำเร็จ', e));
       return;
     }
     const file = new File([blob], filename, { type: 'image/png' });
+
+    notifyShop(order, blob).catch(err => console.warn('แจ้ง LINE ร้านไม่สำเร็จ', err));
 
     saveBtn.onclick = () => downloadBlob(blob, filename);
 

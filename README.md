@@ -163,6 +163,28 @@ select order_number, total_amount, status from orders order by created_at desc l
 
 ---
 
+### 13. แจ้งเตือนคำสั่งซื้อเข้า LINE ร้าน (รูปบิลเด้งอัตโนมัติ)
+
+ลูกค้ากดสั่งซื้อปุ๊บ → LINE ร้านได้ข้อความ "คำสั่งซื้อใหม่" + รูปบิลทันที
+
+**ก. สร้าง LINE Official Account + Messaging API**
+1. เข้า https://developers.line.biz/console/ → ล็อกอินด้วย LINE ของเจ้าของร้าน
+2. **Create a new provider** (ตั้งชื่อร้าน) → **Create a Messaging API channel** → กรอกข้อมูลให้ครบ → Create
+3. แท็บ **Messaging API** → เลื่อนลงล่าง **Channel access token (long-lived)** → **Issue** → คัดลอกเก็บไว้
+4. แท็บ **Messaging API** → สแกน **QR code** ด้วย LINE ของเจ้าของร้าน เพื่อเพิ่มบอทเป็นเพื่อน
+5. แท็บ **Basic settings** → เลื่อนลงล่าง **Your user ID** (ขึ้นต้นด้วย `U...`) → คัดลอกเก็บไว้
+
+**ข. ตั้งค่า Supabase**
+1. SQL Editor → รัน `supabase/line-notify.sql`
+2. เมนู **Edge Functions** → **Deploy a new function** → **Via Editor** → ตั้งชื่อ **`notify-line`** → ลบโค้ดตัวอย่าง วางโค้ดจาก `supabase/functions/notify-line/index.ts` → **Deploy**
+3. **Edge Functions → Secrets** → เพิ่ม 2 ค่า:
+   - `LINE_CHANNEL_ACCESS_TOKEN` = token จากข้อ ก.3
+   - `LINE_TO` = user ID จากข้อ ก.5
+4. ลองสั่งซื้อ 1 ครั้ง → LINE ของเจ้าของร้านจะได้รูปบิล
+
+> ส่งเข้ากลุ่ม LINE แทนได้: เชิญบอทเข้ากลุ่ม แล้วใช้ Group ID (`C...`) เป็น `LINE_TO`
+> แพ็กเกจฟรีของ LINE OA ส่งได้ประมาณ 300 ข้อความ/เดือน (1 คำสั่งซื้อ = 2 ข้อความ: ข้อความ + รูป)
+
 ## ความปลอดภัย (สรุป RLS)
 
 | ตาราง | ลูกค้า (anon) | Admin |

@@ -369,6 +369,10 @@ a.contact-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
 .order-info dd { margin: 0; font: 600 17px var(--font-head); color: var(--green-900); text-align: right; }
 .order-no { display: inline-flex; align-items: center; gap: 8px; }
 .success-actions { display: grid; gap: 10px; }
+.bill-box { display: grid; gap: 10px; justify-items: center; margin: 8px 0 20px; }
+.bill-image { width: 100%; max-width: 360px; border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+.btn-fb { background: #0866ff; color: #fff; }
+.btn-fb:hover:not(:disabled) { filter: brightness(.95); }
 
 /* ---------- Status badges (ใช้ร่วมกับ admin) ---------- */
 .status-badge {

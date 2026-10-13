@@ -76,13 +76,151 @@
     return ok;
   }
 
-  function showSuccess(result) {
+  /* ---------- รูปบิล (วาดด้วย canvas) ---------- */
+  function wrapText(ctx, text, maxWidth) {
+    const parts = window.Intl?.Segmenter
+      ? [...new Intl.Segmenter('th', { granularity: 'word' }).segment(text)].map(s => s.segment)
+      : [...text];
+    const lines = [];
+    let line = '';
+    for (const part of parts) {
+      if (line && ctx.measureText(line + part).width > maxWidth) { lines.push(line.trimEnd()); line = part.trimStart(); }
+      else line += part;
+    }
+    if (line) lines.push(line);
+    return lines.length ? lines : [''];
+  }
+
+  async function drawBill(order) {
+    try { await document.fonts.ready; } catch { /* ignore */ }
+    const W = 1080, P = 72, inner = W - P * 2;
+    const font = (w, size) => `${w} ${size}px Sarabun, Prompt, sans-serif`;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // วาด 2 รอบ: รอบแรกวัดความสูงของบิล รอบสองวาดจริง
+    const render = draw => {
+      let y = 0;
+      const text = (str, x, size, opt = {}) => {
+        ctx.font = font(opt.weight || 400, size);
+        ctx.textAlign = opt.align || 'left';
+        ctx.fillStyle = opt.color || '#1f2a22';
+        if (draw) ctx.fillText(str, x, y);
+      };
+      const rule = (color = '#e3dccb', dash = []) => {
+        if (!draw) return;
+        ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.setLineDash(dash);
+        ctx.beginPath(); ctx.moveTo(P, y); ctx.lineTo(W - P, y); ctx.stroke(); ctx.setLineDash([]);
+      };
+      const para = (str, size, color) => {
+        ctx.font = font(400, size);
+        for (const l of wrapText(ctx, str, inner)) { y += size + 14; text(l, P, size, { color }); }
+      };
+
+      // หัวบิล
+      if (draw) { ctx.fillStyle = '#1c3a26'; ctx.fillRect(0, 0, W, 210); }
+      y = 92;  text(SHOP.name, W / 2, 34, { weight: 700, align: 'center', color: '#fff' });
+      y = 140; text(SHOP.location, W / 2, 26, { align: 'center', color: '#cfe3d2' });
+      y = 182; text('ใบสั่งซื้อ', W / 2, 26, { weight: 600, align: 'center', color: '#f1e3c4' });
+
+      y = 280; text('เลขคำสั่งซื้อ', P, 26, { color: '#6b7568' });
+      text(order.order_number, W - P, 34, { weight: 700, align: 'right' });
+      y += 48; text('วันที่สั่ง', P, 26, { color: '#6b7568' });
+      text(formatDate(order.created_at), W - P, 26, { align: 'right' });
+
+      y += 36; rule();
+      y += 54; text('ผู้สั่งซื้อ', P, 26, { weight: 700 });
+      y += 44; text(`${order.customer_name}  ·  ${order.phone}`, P, 26);
+      para(order.address, 24, '#4a5548');
+      if (order.note) para('หมายเหตุ: ' + order.note, 24, '#8a6d2f');
+
+      y += 36; rule();
+      y += 50; text('รายการ', P, 24, { weight: 700, color: '#6b7568' });
+      text('จำนวน', W - P - 220, 24, { weight: 700, align: 'right', color: '#6b7568' });
+      text('ราคา', W - P, 24, { weight: 700, align: 'right', color: '#6b7568' });
+      for (const it of order.items) {
+        ctx.font = font(400, 26);
+        const nameLines = wrapText(ctx, it.name, inner - 340);
+        y += 50;
+        text(nameLines[0], P, 26);
+        text('× ' + it.quantity, W - P - 220, 26, { align: 'right' });
+        text(formatPrice(it.price * it.quantity), W - P, 26, { align: 'right' });
+        for (const l of nameLines.slice(1)) { y += 36; text(l, P, 26); }
+        y += 34; text(`${formatPrice(it.price)} / ชิ้น`, P, 22, { color: '#8a948a' });
+      }
+
+      y += 36; rule('#1c3a26', [10, 8]);
+      y += 66; text('ยอดรวม', P, 32, { weight: 700 });
+      text(formatPrice(order.total_amount), W - P, 44, { weight: 700, align: 'right', color: '#2f6b3f' });
+      y += 50; text('สถานะ: ' + (ORDER_STATUS[order.status]?.label || 'รอตรวจสอบ'), P, 24, { color: '#6b7568' });
+
+      y += 70; text('ขอบคุณที่สนับสนุนสินค้าชุมชน', W / 2, 26, { weight: 600, align: 'center', color: '#2f6b3f' });
+      y += 40; text(`LINE: ${SHOP.lineId}`, W / 2, 22, { align: 'center', color: '#8a948a' });
+      return y + 60;
+    };
+
+    canvas.width = W;
+    canvas.height = render(false);
+    ctx.fillStyle = '#fffdf7';
+    ctx.fillRect(0, 0, W, canvas.height);
+    render(true);
+    return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  }
+
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
+
+  async function setupBill(order) {
+    const sendBtn = document.getElementById('sendBill');
+    const saveBtn = document.getElementById('saveBill');
+    const img = document.getElementById('billImage');
+    const filename = `bill-${order.order_number}.png`;
+    const pageUrl = SHOP.messenger || SHOP.facebook;
+
+    let blob;
+    try {
+      blob = await drawBill(order);
+      img.src = URL.createObjectURL(blob);
+      img.hidden = false;
+    } catch (err) {
+      console.error(err);
+      sendBtn.hidden = saveBtn.hidden = true;
+      return;
+    }
+    const file = new File([blob], filename, { type: 'image/png' });
+
+    saveBtn.onclick = () => downloadBlob(blob, filename);
+
+    sendBtn.onclick = async () => {
+      // มือถือ: เปิดเมนูแชร์ -> เลือก Messenger -> เลือกแชทของเพจ
+      if (navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], text: `คำสั่งซื้อ ${order.order_number} ยอดรวม ${formatPrice(order.total_amount)}` });
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+        }
+      }
+      // คอมพิวเตอร์ / แชร์ไฟล์ไม่ได้: บันทึกรูป แล้วเปิดเพจให้แนบรูปในแชท
+      downloadBlob(blob, filename);
+      showToast('บันทึกรูปบิลแล้ว กด "ส่งข้อความ" ในเพจ แล้วแนบรูปนี้ได้เลย', 'success', 6000);
+      setTimeout(() => window.open(pageUrl, '_blank', 'noopener'), 600);
+    };
+  }
+
+  function showSuccess(result, order) {
     checkoutView.hidden = true;
     successView.hidden = false;
     document.getElementById('successOrderNo').textContent = result.order_number;
     document.getElementById('successTotal').textContent = formatPrice(result.total_amount);
     document.getElementById('successStatus').innerHTML = statusBadge(result.status || 'pending');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setupBill({ ...order, ...result, created_at: result.created_at || new Date().toISOString() });
 
     document.getElementById('copyOrderNo').onclick = async () => {
       try {
@@ -118,8 +256,15 @@
       });
       if (error) throw error;
 
+      const order = {
+        customer_name: form.customer_name.value.trim(),
+        phone: form.phone.value.trim(),
+        address: form.address.value.trim(),
+        note: form.note.value.trim(),
+        items: items.map(i => ({ name: i.name, price: i.price, quantity: i.quantity }))
+      };
       Cart.clear();
-      showSuccess(data);
+      showSuccess(data, order);
     } catch (err) {
       console.error(err);
       const msg = translateError(err);

@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=4">
+  <link rel="stylesheet" href="css/style.css?v=5">
 </head>
 <body>
 
@@ -83,7 +83,12 @@
       <div><dt>ยอดรวม</dt><dd id="successTotal"></dd></div>
       <div><dt>สถานะ</dt><dd id="successStatus"></dd></div>
     </dl>
-    <p class="field-hint">กรุณาแจ้งเลขคำสั่งซื้อเมื่อติดต่อร้านทาง LINE</p>
+    <div class="bill-box">
+      <img id="billImage" class="bill-image" alt="รูปบิลคำสั่งซื้อ" hidden>
+      <p class="field-hint">กดปุ่มด้านล่างเพื่อส่งรูปบิลให้ร้านทาง Messenger ของเพจ</p>
+      <button type="button" class="btn btn-fb btn-lg btn-block" id="sendBill">📨 ส่งบิลให้เพจ Facebook</button>
+      <button type="button" class="btn-link" id="saveBill">⬇ บันทึกรูปบิลลงเครื่อง</button>
+    </div>
     <div class="success-actions">
       <a href="my-orders.html" class="btn btn-primary btn-lg btn-block">📦 ติดตามสถานะคำสั่งซื้อ</a>
       <a href="#" class="btn btn-line btn-lg btn-block" data-line-link>💬 ติดต่อร้านผ่าน LINE</a>
@@ -125,8 +130,8 @@
 </a>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=7"></script>
+<script src="js/supabase.js?v=8"></script>
 <script src="js/cart.js?v=3"></script>
-<script src="js/checkout.js?v=3"></script>
+<script src="js/checkout.js?v=4"></script>
 </body>
 </html>

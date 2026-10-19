@@ -194,6 +194,7 @@
     const saveBtn = document.getElementById('saveBill');
     const img = document.getElementById('billImage');
     const filename = `bill-${order.order_number}.png`;
+    await shopSettingsReady;
     const pageUrl = SHOP.messenger || SHOP.facebook;
 
     let blob;

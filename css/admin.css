@@ -233,3 +233,15 @@ dialog.modal::backdrop { background: rgba(20, 35, 25, .5); }
   .image-field img { width: 72px; height: 72px; }
   .ledger-float { min-height: 44px; padding: 8px 16px; font-size: 14px; right: 12px; bottom: 12px; }
 }
+
+/* ---------- ตั้งค่าร้าน ---------- */
+.settings-grid { display: grid; gap: 16px; align-items: start; }
+@media (min-width: 1000px) { .settings-grid { grid-template-columns: 3fr 2fr; } }
+.settings-sub { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+.settings-updated { margin: 10px 0 0; text-align: center; }
+.settings-note { font-size: 14px; margin: 0 0 12px; }
+.admin-list { list-style: none; margin: 0; padding: 0; }
+.admin-list li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px dashed var(--line); }
+.admin-list li > div { min-width: 0; overflow-wrap: anywhere; }
+.admin-list small { display: block; color: var(--muted); font-size: 12px; }
+.stock-pill.self { background: var(--green-100); color: var(--green-800); }

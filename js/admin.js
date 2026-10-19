@@ -658,6 +658,96 @@ async function initOrders() {
 }
 
 /* =====================================================================
+   SETTINGS — ช่องทางติดต่อ / ที่ตั้ง / รายชื่อ Admin
+   ===================================================================== */
+
+async function initSettings() {
+  const form = document.getElementById('settingsForm');
+  const updatedEl = document.getElementById('settingsUpdated');
+  const fields = ['line_id', 'facebook_url', 'messenger_url', 'location_text', 'map_url'];
+  const isHttps = url => /^https:\/\//i.test(url);
+
+  const showUpdated = iso => { updatedEl.textContent = iso ? `แก้ไขล่าสุด ${formatDate(iso)}` : ''; };
+
+  // ลิงก์ "ทดสอบเปิด" ใช้ค่าที่พิมพ์อยู่ในฟอร์มตอนนั้น
+  const previewUrl = {
+    line: () => form.line_id.value.trim() && 'https://line.me/ti/p/~' + encodeURIComponent(form.line_id.value.trim()),
+    facebook: () => form.facebook_url.value.trim(),
+    map: () => form.map_url.value.trim() ||
+      'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(form.location_text.value.trim())
+  };
+  form.querySelectorAll('[data-preview]').forEach(a => a.addEventListener('click', e => {
+    const url = previewUrl[a.dataset.preview]();
+    if (!isHttps(url)) { e.preventDefault(); showToast('ยังไม่ได้ใส่ลิงก์ที่ถูกต้อง', 'warn'); return; }
+    a.href = url;
+  }));
+
+  const { data, error } = await sb.from('shop_settings').select('*').eq('id', 1).maybeSingle();
+  if (error) throw error;
+  if (data) { fields.forEach(f => { form[f].value = data[f] || ''; }); showUpdated(data.updated_at); }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const row = Object.fromEntries(fields.map(f => [f, form[f].value.trim()]));
+    if (!row.line_id) { showToast('กรุณาใส่ LINE ID', 'warn'); form.line_id.focus(); return; }
+    if (!row.location_text) { showToast('กรุณาใส่ที่ตั้งร้าน', 'warn'); form.location_text.focus(); return; }
+    const bad = ['facebook_url', 'messenger_url', 'map_url'].find(f => row[f] && !isHttps(row[f]));
+    if (bad) { showToast('ลิงก์ต้องขึ้นต้นด้วย https://', 'warn'); form[bad].focus(); return; }
+
+    const btn = form.querySelector('[type="submit"]');
+    btn.disabled = true;
+    const { data: saved, error } = await sb.from('shop_settings')
+      .update(row).eq('id', 1).select('updated_at').single();
+    btn.disabled = false;
+    if (error) { showToast(translateError(error), 'error'); return; }
+    showUpdated(saved.updated_at);
+    showToast('บันทึกแล้ว หน้าร้านใช้ค่าใหม่ทันที', 'success');
+  });
+
+  // ---------- รายชื่อ Admin ----------
+  const list = document.getElementById('adminList');
+  const addForm = document.getElementById('adminAddForm');
+  const myId = Admin.session.user.id;
+
+  async function loadAdmins() {
+    const { data, error } = await sb.rpc('admin_list_admins');
+    if (error) { list.innerHTML = `<li class="muted">${escapeHtml(translateError(error))}</li>`; return; }
+    list.innerHTML = data.map(a => `
+      <li>
+        <div><strong>${escapeHtml(a.email)}</strong>${a.user_id === myId ? ' <span class="stock-pill self">คุณ</span>' : ''}
+          <small>เพิ่มเมื่อ ${escapeHtml(formatDate(a.created_at))}</small></div>
+        ${a.user_id === myId ? '' : `<button type="button" class="btn btn-sm btn-danger-ghost" data-remove="${escapeHtml(a.user_id)}" data-email="${escapeHtml(a.email)}">ลบสิทธิ์</button>`}
+      </li>`).join('');
+  }
+
+  addForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = addForm.email.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('รูปแบบอีเมลไม่ถูกต้อง', 'warn'); addForm.email.focus(); return; }
+    const btn = addForm.querySelector('[type="submit"]');
+    btn.disabled = true;
+    const { error } = await sb.rpc('admin_add_admin', { p_email: email });
+    btn.disabled = false;
+    if (error) { showToast(translateError(error), 'error', 5000); return; }
+    addForm.reset();
+    showToast(`เพิ่ม ${email} เป็น Admin แล้ว`, 'success');
+    await loadAdmins();
+  });
+
+  list.addEventListener('click', async e => {
+    const btn = e.target.closest('[data-remove]');
+    if (!btn || !confirm(`ลบสิทธิ์ Admin ของ ${btn.dataset.email}?\n(บัญชียังอยู่ แต่จะเข้าหลังร้านไม่ได้)`)) return;
+    btn.disabled = true;
+    const { error } = await sb.rpc('admin_remove_admin', { p_user_id: btn.dataset.remove });
+    if (error) { btn.disabled = false; showToast(translateError(error), 'error'); return; }
+    showToast('ลบสิทธิ์ Admin แล้ว', 'success');
+    await loadAdmins();
+  });
+
+  await loadAdmins();
+}
+
+/* =====================================================================
    BOOT
    ===================================================================== */
 
@@ -671,6 +761,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (page === 'products') await initProducts();
     if (page === 'orders') await initOrders();
     if (page === 'categories') await initCategories();
+    if (page === 'settings') await initSettings();
   } catch (err) {
     console.error(err);
     showToast(translateError(err), 'error', 5000);

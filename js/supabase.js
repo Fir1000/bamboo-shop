@@ -7,13 +7,15 @@ const SUPABASE_URL = 'https://guucywlofreotgzwmfmx.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_vTzfwFolUtMVNRmvA7w1xA_I3VBFMEu';
 // ▲▲▲ ห้ามใส่ service_role key ในไฟล์นี้เด็ดขาด ▲▲▲
 
+// ค่าเริ่มต้น — ถูกแทนที่ด้วยข้อมูลจากตาราง shop_settings (Admin แก้ได้ที่ admin/settings.html)
 const SHOP = {
   name: 'วิสาหกิจชุมชนปลูกพืชพลังงานและแปรรูปไม้ไผ่',
   location: 'ต.ปุโรง อ.กรงปินัง จ.ยะลา',
   lineId: '141414dw',
   facebook: 'https://www.facebook.com/share/1DzgU4Dign/',
   // ลิงก์แชท Messenger ของเพจ เช่น 'https://m.me/ชื่อผู้ใช้เพจ' (ว่างไว้ = เปิดหน้าเพจ Facebook แทน)
-  messenger: 'https://m.me/61594881681695'
+  messenger: 'https://m.me/61594881681695',
+  mapUrl: '' // ว่างไว้ = ค้นหาจากข้อความที่ตั้งใน Google Maps
 };
 
 // ค่าเริ่มต้น — ถูกแทนที่ด้วยข้อมูลจากตาราง categories เมื่อเรียก loadCategories()
@@ -29,7 +31,9 @@ const ORDER_STATUS = {
   cancelled: { label: 'ยกเลิก',             cls: 'st-cancelled' }
 };
 
-const LINE_URL = 'https://line.me/ti/p/~' + encodeURIComponent(SHOP.lineId);
+const lineUrl = () => 'https://line.me/ti/p/~' + encodeURIComponent(SHOP.lineId);
+const mapUrl = () => SHOP.mapUrl ||
+  'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(SHOP.location);
 
 function isConfigured() {
   return !SUPABASE_URL.includes('YOUR_PROJECT_ID') && !SUPABASE_ANON_KEY.includes('YOUR_');
@@ -44,6 +48,27 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 });
 
 /* ---------- Helpers ---------- */
+
+const SHOP_SETTINGS_FIELDS = {
+  line_id: 'lineId', facebook_url: 'facebook', messenger_url: 'messenger',
+  location_text: 'location', map_url: 'mapUrl'
+};
+
+function applyShopSettings(row) {
+  for (const [col, key] of Object.entries(SHOP_SETTINGS_FIELDS)) {
+    // ช่องที่ต้องมีค่าเสมอ ถ้าว่างใช้ค่าเริ่มต้นแทน
+    if (row[col] || key === 'messenger' || key === 'mapUrl') SHOP[key] = row[col] || '';
+  }
+}
+
+// โหลดครั้งเดียวต่อหน้า — หน้าที่ต้องใช้ค่า SHOP ล่าสุดให้ await shopSettingsReady ก่อน
+const shopSettingsReady = (async () => {
+  if (!isConfigured()) return SHOP;
+  const { data, error } = await sb.from('shop_settings').select('*').eq('id', 1).maybeSingle();
+  if (error) console.warn('โหลดตั้งค่าร้านไม่สำเร็จ ใช้ค่าเริ่มต้นแทน', error);
+  else if (data) applyShopSettings(data);
+  return SHOP;
+})();
 
 async function loadCategories() {
   if (!isConfigured()) return CATEGORIES;
@@ -107,6 +132,9 @@ function translateError(err) {
   if (/categories_name_key/i.test(msg)) return 'มีหมวดหมู่ชื่อนี้อยู่แล้ว';
   if (/on table "categories" violates foreign key/i.test(msg)) return 'ยังมีสินค้าอยู่ในหมวดหมู่นี้ กรุณาย้ายสินค้าไปหมวดอื่นก่อนลบ';
   if (/products_category_fkey/i.test(msg)) return 'ไม่พบหมวดหมู่นี้ (อาจถูกลบไปแล้ว) กรุณาเลือกหมวดหมู่ใหม่';
+  if (/ADMIN_USER_NOT_FOUND/.test(msg)) return 'ไม่พบบัญชีอีเมลนี้ — ให้ผู้ใช้สมัครสมาชิกที่หน้าเข้าสู่ระบบของร้านก่อน';
+  if (/ADMIN_REMOVE_SELF/.test(msg)) return 'ไม่สามารถลบสิทธิ์ Admin ของตัวเองได้';
+  if (/shop_settings_.*_check/i.test(msg)) return 'ลิงก์ต้องขึ้นต้นด้วย https://';
   if (/invalid input syntax/i.test(msg)) return 'ข้อมูลไม่ถูกต้อง';
   return msg;
 }
@@ -187,18 +215,20 @@ async function initAccountLink() {
 
 /* ---------- UI ร่วมของหน้าลูกค้า ---------- */
 
+// ลิงก์/ข้อความติดต่อร้านทุกจุด (data-line-link, data-facebook-link, data-map-link ฯลฯ)
+function applyShopLinks() {
+  const ext = (a, href) => { a.href = href; a.target = '_blank'; a.rel = 'noopener'; };
+  document.querySelectorAll('[data-line-link]').forEach(a => ext(a, lineUrl()));
+  document.querySelectorAll('[data-facebook-link]').forEach(a => ext(a, SHOP.facebook));
+  document.querySelectorAll('[data-map-link]').forEach(a => ext(a, mapUrl()));
+  document.querySelectorAll('[data-line-label]').forEach(el => { el.textContent = 'LINE: ' + SHOP.lineId; });
+  document.querySelectorAll('[data-line-id-text]').forEach(el => { el.textContent = 'ID: ' + SHOP.lineId; });
+  document.querySelectorAll('[data-location-text]').forEach(el => { el.textContent = SHOP.location; });
+}
+
 function initCommonUI() {
-  // ลิงก์ LINE ทุกจุด
-  document.querySelectorAll('[data-line-link]').forEach(a => {
-    a.href = LINE_URL;
-    a.target = '_blank';
-    a.rel = 'noopener';
-  });
-  document.querySelectorAll('[data-facebook-link]').forEach(a => {
-    a.href = SHOP.facebook;
-    a.target = '_blank';
-    a.rel = 'noopener';
-  });
+  applyShopLinks();
+  shopSettingsReady.then(applyShopLinks);
   document.querySelectorAll('[data-year]').forEach(el => { el.textContent = new Date().getFullYear() + 543; });
   initAccountLink();
 

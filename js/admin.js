@@ -682,9 +682,21 @@ async function initSettings() {
     a.href = url;
   }));
 
+  // เติมค่าปัจจุบันของร้านไว้ก่อน แล้วทับด้วยค่าที่บันทึกในฐานข้อมูล (ถ้ามี)
+  const current = {
+    line_id: SHOP.lineId, facebook_url: SHOP.facebook, messenger_url: SHOP.messenger,
+    location_text: SHOP.location, map_url: SHOP.mapUrl
+  };
+  fields.forEach(f => { form[f].value = current[f] || ''; });
+
   const { data, error } = await sb.from('shop_settings').select('*').eq('id', 1).maybeSingle();
-  if (error) throw error;
-  if (data) { fields.forEach(f => { form[f].value = data[f] || ''; }); showUpdated(data.updated_at); }
+  if (error) {
+    console.warn('โหลดตั้งค่าร้านไม่สำเร็จ', error);
+    showToast('ยังไม่ได้สร้างตารางตั้งค่าในฐานข้อมูล — แสดงค่าปัจจุบันของร้านไว้ให้ก่อน', 'warn', 6000);
+  } else if (data) {
+    fields.forEach(f => { form[f].value = data[f] || current[f] || ''; });
+    showUpdated(data.updated_at);
+  }
 
   form.addEventListener('submit', async e => {
     e.preventDefault();

@@ -208,3 +208,28 @@ dialog.modal::backdrop { background: rgba(20, 35, 25, .5); }
 }
 .ledger-float:hover { transform: translateY(-2px); background: var(--green-800); }
 .admin-main { padding-bottom: 96px; } /* เว้นที่ให้ปุ่มลอยไม่ทับเนื้อหาท้ายหน้า */
+
+/* ---------- มือถือ: ย่อขนาดให้กระชับ ---------- */
+@media (max-width: 599px) {
+  .admin-topbar { height: 54px; padding: 0 12px; }
+  .admin-menu-btn { width: 38px; height: 38px; font-size: 18px; }
+  .admin-main { padding: 16px 12px 88px; }
+  .admin-head h1 { font-size: 20px; }
+  .stat-grid { gap: 8px; margin-bottom: 16px; }
+  .stat-card { padding: 12px; }
+  .stat-card .stat-icon { font-size: 18px; }
+  .stat-card .stat-label { font-size: 12px; }
+  .stat-card .stat-value { font-size: 20px; }
+  .card { padding: 14px; }
+  .card-head h2 { font-size: 16px; }
+  .toolbar .search-input, .toolbar select { min-height: 42px; }
+  .data-table { font-size: 14px; }
+  .data-table tr { padding: 6px 12px; margin-bottom: 10px; }
+  .prod-cell img { width: 44px; height: 44px; }
+  .modal-head { padding: 14px 16px; }
+  .modal-head h2 { font-size: 18px; }
+  .modal-body { padding: 16px; }
+  .modal-foot { padding: 12px 16px; }
+  .image-field img { width: 72px; height: 72px; }
+  .ledger-float { min-height: 44px; padding: 8px 16px; font-size: 14px; right: 12px; bottom: 12px; }
+}

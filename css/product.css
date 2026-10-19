@@ -95,3 +95,33 @@
 .sticky-cart .sc-info strong { font: 700 18px var(--font-head); }
 .sticky-cart .btn { min-height: 44px; background: var(--bamboo-100); color: var(--green-900); }
 @media (min-width: 900px) { .sticky-cart { display: none !important; } }
+
+/* ---------- มือถือ: การ์ดสินค้า 2 คอลัมน์ ขนาดกระชับ ---------- */
+@media (max-width: 599px) {
+  .search-box input { min-height: 44px; padding: 10px 14px 10px 42px; }
+  .search-box::before { left: 14px; font-size: 14px; }
+  .chip { min-height: 36px; padding: 6px 12px; font-size: 14px; }
+  .result-count { font-size: 13px; }
+
+  .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .product-cat { left: 6px; top: 6px; padding: 2px 8px; font-size: 11px; }
+  .soldout-ribbon { font-size: 16px; }
+  .product-body { padding: 10px; gap: 6px; }
+  .product-name { font-size: 15px; }
+  .product-desc { font-size: 13px; line-height: 1.45; }
+  .product-meta { flex-wrap: wrap; gap: 4px 6px; }
+  .product-price { font-size: 18px; }
+  .stock-tag { padding: 2px 8px; font-size: 11px; }
+  .in-cart-note { font-size: 12px; }
+
+  .product-actions { flex-direction: column; align-items: stretch; gap: 6px; }
+  .product-actions .qty-stepper { height: 36px; }
+  .product-actions .qty-stepper button { width: 36px; }
+  .product-actions .qty-stepper input { flex: 1; width: auto; min-width: 0; }
+  .product-actions .btn-add { min-height: 38px; padding: 6px 8px; font-size: 13px; }
+
+  .sticky-cart { left: 10px; right: 10px; bottom: 10px; padding: 8px 8px 8px 16px; }
+  .sticky-cart .sc-info small { font-size: 12px; }
+  .sticky-cart .sc-info strong { font-size: 16px; }
+  .sticky-cart .btn { min-height: 40px; }
+}

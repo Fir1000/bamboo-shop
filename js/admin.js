@@ -661,6 +661,45 @@ async function initOrders() {
    SETTINGS — ช่องทางติดต่อ / ที่ตั้ง / รายชื่อ Admin
    ===================================================================== */
 
+// ข้อความบนหน้าร้านที่แก้ได้ — key ตรงกับ data-text="key" ในหน้า HTML: [key, ป้ายชื่อ, หลายบรรทัด?]
+const CONTENT_GROUPS = [
+  { title: 'ชื่อร้าน (ทุกหน้า)', fields: [
+    ['shop_name', 'ชื่อร้านเต็ม (ท้ายเว็บและบนบิล)'],
+    ['brand_title', 'ชื่อร้านบนแถบเมนู (บรรทัดบน)'],
+    ['brand_subtitle', 'ชื่อร้านบนแถบเมนู (บรรทัดล่าง)'],
+    ['line_float_label', 'ข้อความปุ่ม LINE ลอยมุมจอ']
+  ] },
+  { title: 'ส่วนหัวหน้าแรก', fields: [
+    ['hero_kicker', 'ข้อความเล็กด้านบน'],
+    ['hero_title', 'หัวข้อใหญ่'],
+    ['hero_subtitle', 'คำอธิบายใต้หัวข้อ', true],
+    ['hero_button', 'ปุ่มเลือกซื้อสินค้า'],
+    ['hero_line_button', 'ปุ่มสอบถามทาง LINE']
+  ] },
+  { title: 'จุดเด่นของร้าน (3 กล่อง)', fields: [
+    ['feature1_icon', 'กล่อง 1 · ไอคอน (อีโมจิ)'], ['feature1_title', 'กล่อง 1 · หัวข้อ'], ['feature1_text', 'กล่อง 1 · รายละเอียด', true],
+    ['feature2_icon', 'กล่อง 2 · ไอคอน (อีโมจิ)'], ['feature2_title', 'กล่อง 2 · หัวข้อ'], ['feature2_text', 'กล่อง 2 · รายละเอียด', true],
+    ['feature3_icon', 'กล่อง 3 · ไอคอน (อีโมจิ)'], ['feature3_title', 'กล่อง 3 · หัวข้อ'], ['feature3_text', 'กล่อง 3 · รายละเอียด', true]
+  ] },
+  { title: 'สินค้าแนะนำ', fields: [
+    ['featured_eyebrow', 'ข้อความเล็กด้านบน'],
+    ['featured_title', 'หัวข้อ']
+  ] },
+  { title: 'เกี่ยวกับเรา', fields: [
+    ['about_eyebrow', 'ข้อความเล็กด้านบน'],
+    ['about_title', 'หัวข้อ'],
+    ['about_text1', 'ย่อหน้าที่ 1', true],
+    ['about_text2', 'ย่อหน้าที่ 2', true],
+    ['about_card_title', 'การ์ดโลโก้ · หัวข้อ'],
+    ['about_card_tagline', 'การ์ดโลโก้ · คำขวัญ']
+  ] },
+  { title: 'ติดต่อเรา', fields: [
+    ['contact_eyebrow', 'ข้อความเล็กด้านบน'],
+    ['contact_title', 'หัวข้อ'],
+    ['facebook_label', 'คำอธิบายใต้ Facebook']
+  ] }
+];
+
 async function initSettings() {
   const form = document.getElementById('settingsForm');
   const updatedEl = document.getElementById('settingsUpdated');
@@ -689,18 +728,52 @@ async function initSettings() {
   };
   fields.forEach(f => { form[f].value = current[f] || ''; });
 
+  // ข้อความบนหน้าร้าน: ค่าเริ่มต้นอ่านจากหน้าแรกจริง (องค์ประกอบที่มี data-text)
+  const contentBox = document.getElementById('contentFields');
+  const defaults = {};
+  try {
+    const html = await (await fetch('../index.html', { cache: 'no-cache' })).text();
+    new DOMParser().parseFromString(html, 'text/html').querySelectorAll('[data-text]').forEach(el => {
+      defaults[el.dataset.text] ??= el.textContent.replace(/\s+/g, ' ').trim();
+    });
+  } catch (err) { console.warn('อ่านข้อความหน้าร้านไม่สำเร็จ', err); }
+
+  contentBox.innerHTML = CONTENT_GROUPS.map(g => `
+    <fieldset class="content-group">
+      <legend>${escapeHtml(g.title)}</legend>
+      ${g.fields.map(([key, label, long]) => `
+        <div class="field">
+          <label for="c_${key}">${escapeHtml(label)}</label>
+          ${long
+            ? `<textarea id="c_${key}" data-content="${key}" rows="3" maxlength="600"></textarea>`
+            : `<input id="c_${key}" data-content="${key}" maxlength="200">`}
+        </div>`).join('')}
+    </fieldset>`).join('');
+  const contentInputs = [...contentBox.querySelectorAll('[data-content]')];
+  const fillContent = saved => contentInputs.forEach(el => {
+    el.value = saved?.[el.dataset.content] || defaults[el.dataset.content] || '';
+  });
+  fillContent({});
+
   const { data, error } = await sb.from('shop_settings').select('*').eq('id', 1).maybeSingle();
   if (error) {
     console.warn('โหลดตั้งค่าร้านไม่สำเร็จ', error);
     showToast('ยังไม่ได้สร้างตารางตั้งค่าในฐานข้อมูล — แสดงค่าปัจจุบันของร้านไว้ให้ก่อน', 'warn', 6000);
   } else if (data) {
     fields.forEach(f => { form[f].value = data[f] || current[f] || ''; });
+    fillContent(data.content);
     showUpdated(data.updated_at);
   }
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const row = Object.fromEntries(fields.map(f => [f, form[f].value.trim()]));
+    // เก็บเฉพาะข้อความที่ต่างจากค่าเดิมของหน้าร้าน
+    row.content = {};
+    contentInputs.forEach(el => {
+      const key = el.dataset.content, value = el.value.trim();
+      if (value && value !== defaults[key]) row.content[key] = value;
+    });
     if (!row.line_id) { showToast('กรุณาใส่ LINE ID', 'warn'); form.line_id.focus(); return; }
     if (!row.location_text) { showToast('กรุณาใส่ที่ตั้งร้าน', 'warn'); form.location_text.focus(); return; }
     const bad = ['facebook_url', 'messenger_url', 'map_url'].find(f => row[f] && !isHttps(row[f]));

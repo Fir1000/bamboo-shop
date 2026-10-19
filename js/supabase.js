@@ -15,7 +15,8 @@ const SHOP = {
   facebook: 'https://www.facebook.com/share/1DzgU4Dign/',
   // ลิงก์แชท Messenger ของเพจ เช่น 'https://m.me/ชื่อผู้ใช้เพจ' (ว่างไว้ = เปิดหน้าเพจ Facebook แทน)
   messenger: 'https://m.me/61594881681695',
-  mapUrl: '' // ว่างไว้ = ค้นหาจากข้อความที่ตั้งใน Google Maps
+  mapUrl: '', // ว่างไว้ = ค้นหาจากข้อความที่ตั้งใน Google Maps
+  content: {} // ข้อความบนหน้าร้าน { key: ข้อความ } — แทนที่ <... data-text="key">
 };
 
 // ค่าเริ่มต้น — ถูกแทนที่ด้วยข้อมูลจากตาราง categories เมื่อเรียก loadCategories()
@@ -59,6 +60,8 @@ function applyShopSettings(row) {
     // ช่องที่ต้องมีค่าเสมอ ถ้าว่างใช้ค่าเริ่มต้นแทน
     if (row[col] || key === 'messenger' || key === 'mapUrl') SHOP[key] = row[col] || '';
   }
+  if (row.content && typeof row.content === 'object') SHOP.content = row.content;
+  if (SHOP.content.shop_name) SHOP.name = SHOP.content.shop_name;
 }
 
 // โหลดครั้งเดียวต่อหน้า — หน้าที่ต้องใช้ค่า SHOP ล่าสุดให้ await shopSettingsReady ก่อน
@@ -224,6 +227,10 @@ function applyShopLinks() {
   document.querySelectorAll('[data-line-label]').forEach(el => { el.textContent = 'LINE: ' + SHOP.lineId; });
   document.querySelectorAll('[data-line-id-text]').forEach(el => { el.textContent = 'ID: ' + SHOP.lineId; });
   document.querySelectorAll('[data-location-text]').forEach(el => { el.textContent = SHOP.location; });
+  document.querySelectorAll('[data-text]').forEach(el => {
+    const value = SHOP.content[el.dataset.text];
+    if (typeof value === 'string' && value.trim()) el.textContent = value;
+  });
 }
 
 function initCommonUI() {

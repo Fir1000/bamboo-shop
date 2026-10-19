@@ -14,6 +14,14 @@ create table if not exists public.shop_settings (
   updated_at     timestamptz not null default now()
 );
 
+-- ข้อความบนหน้าร้านที่ Admin แก้ไข { "hero_title": "...", ... } (key ตรงกับ data-text ในหน้า HTML)
+alter table public.shop_settings
+  add column if not exists content jsonb not null default '{}'::jsonb;
+alter table public.shop_settings drop constraint if exists shop_settings_content_check;
+alter table public.shop_settings
+  add constraint shop_settings_content_check
+  check (jsonb_typeof(content) = 'object' and pg_column_size(content) < 20000);
+
 insert into public.shop_settings (id, line_id, facebook_url, messenger_url, location_text)
 values (1, '141414dw', 'https://www.facebook.com/share/1DzgU4Dign/', 'https://m.me/61594881681695', 'ต.ปุโรง อ.กรงปินัง จ.ยะลา')
 on conflict (id) do nothing;

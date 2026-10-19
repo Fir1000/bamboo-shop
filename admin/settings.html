@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css?v=6">
-  <link rel="stylesheet" href="../css/admin.css?v=6">
+  <link rel="stylesheet" href="../css/admin.css?v=7">
 </head>
 <body class="admin" data-page="settings">
 
@@ -75,7 +75,13 @@
           <p class="field-hint">เปิด Google Maps → ปักหมุดร้าน → กด "แชร์" → คัดลอกลิงก์มาวาง (ว่างไว้ = ค้นหาจากข้อความที่ตั้ง) · <a href="#" target="_blank" rel="noopener" data-preview="map">ทดสอบเปิดแผนที่</a></p>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-block">💾 บันทึกการตั้งค่า</button>
+        <div class="card-head settings-sub"><h2>📝 ข้อความบนหน้าร้าน</h2></div>
+        <p class="muted settings-note">แก้ข้อความที่แสดงบนหน้าร้านได้ทุกจุด · ช่องที่ลบจนว่างจะกลับไปใช้ข้อความเดิม</p>
+        <div id="contentFields"><p class="muted">กำลังโหลด...</p></div>
+
+        <div class="settings-save">
+          <button type="submit" class="btn btn-primary btn-block">💾 บันทึกการตั้งค่า</button>
+        </div>
         <p class="toolbar-meta settings-updated" id="settingsUpdated"></p>
       </form>
 
@@ -95,7 +101,7 @@
 <a class="ledger-float" href="https://community-ledger-fir1000s-projects.vercel.app/" target="_blank" rel="noopener">📒 <span>จัดการบัญชี</span></a>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/supabase.js?v=10"></script>
-<script src="../js/admin.js?v=5"></script>
+<script src="../js/supabase.js?v=11"></script>
+<script src="../js/admin.js?v=6"></script>
 </body>
 </html>

@@ -245,3 +245,6 @@ dialog.modal::backdrop { background: rgba(20, 35, 25, .5); }
 .admin-list li > div { min-width: 0; overflow-wrap: anywhere; }
 .admin-list small { display: block; color: var(--muted); font-size: 12px; }
 .stock-pill.self { background: var(--green-100); color: var(--green-800); }
+.content-group { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 4px 14px 2px; margin: 0 0 14px; min-width: 0; }
+.content-group legend { padding: 0 6px; font: 600 14px var(--font-head); color: var(--green-800); }
+.settings-save { position: sticky; bottom: 0; z-index: 2; padding: 12px 0 4px; background: linear-gradient(transparent, #fff 30%); }

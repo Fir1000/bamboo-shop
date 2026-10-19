@@ -248,3 +248,18 @@ dialog.modal::backdrop { background: rgba(20, 35, 25, .5); }
 .content-group { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 4px 14px 2px; margin: 0 0 14px; min-width: 0; }
 .content-group legend { padding: 0 6px; font: 600 14px var(--font-head); color: var(--green-800); }
 .settings-save { position: sticky; bottom: 0; z-index: 2; padding: 12px 0 4px; background: linear-gradient(transparent, #fff 30%); }
+
+/* ปุ่มตั้งค่า (ล่างแถบเมนู เหนือปุ่มออกจากระบบ) */
+.admin-sidebar a.side-settings {
+  margin-bottom: 6px; border: 1px solid rgba(255, 255, 255, .18); background: rgba(255, 255, 255, .06);
+  font-weight: 600; color: #fff;
+}
+.admin-sidebar a.side-settings:hover { background: rgba(255, 255, 255, .14); }
+.admin-sidebar a.side-settings.active { background: var(--green-700); border-color: var(--green-500); }
+.side-settings .side-icon {
+  display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%;
+  background: var(--bamboo); color: #fff;
+  box-shadow: 0 0 0 3px rgba(169, 129, 74, .3);
+  transition: transform .3s;
+}
+.admin-sidebar a.side-settings:hover .side-icon { transform: rotate(60deg); }

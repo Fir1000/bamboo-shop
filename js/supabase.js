@@ -278,19 +278,19 @@ const Auth = {
   }
 };
 
-// ปุ่มบัญชีบน navbar: ยังไม่ล็อกอิน = "Log In" / ลูกค้า = "คำสั่งซื้อของฉัน" / Admin = "Log In" (ลิงก์ไปหลังร้าน)
+// ปุ่มบัญชีบน navbar: ยังไม่ล็อกอิน = "เข้าสู่ระบบ" / ลูกค้า = "คำสั่งซื้อของฉัน" / Admin = "เข้าสู่ระบบ" (ลิงก์ไปหลังร้าน)
 async function initAccountLink() {
   const link = document.querySelector('[data-account-link]');
   if (!link) return;
   const label = link.querySelector('.account-label');
   const set = (href, text) => {
     link.href = href; label.textContent = text; link.setAttribute('aria-label', text);
-    link.classList.toggle('is-short', text.length <= 8); // ข้อความสั้นแสดงบนมือถือได้
+    link.classList.toggle('is-short', text.length <= 11); // ข้อความสั้น (เช่น "เข้าสู่ระบบ") แสดงบนมือถือได้
   };
 
   const session = await Auth.session().catch(() => null);
-  if (!session) { set(Auth.loginUrl(), 'Log In'); return; }
-  if (await Auth.isAdmin()) set('admin/dashboard.html', 'Log In');
+  if (!session) { set(Auth.loginUrl(), 'เข้าสู่ระบบ'); return; }
+  if (await Auth.isAdmin()) set('admin/dashboard.html', 'เข้าสู่ระบบ');
   else set('my-orders.html', 'คำสั่งซื้อของฉัน');
 }
 

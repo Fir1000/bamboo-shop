@@ -155,6 +155,9 @@ async function initMyOrdersPage() {
   document.getElementById('accountEmail').textContent = session.user.email || '';
   document.getElementById('accountBar').hidden = false;
   document.getElementById('logoutBtn').addEventListener('click', () => Auth.logout());
+  Sound.bindToggle(document.getElementById('soundToggle'));
+
+  const knownStatus = new Map(); // id → สถานะล่าสุดที่แสดงอยู่
 
   async function load() {
     const { data, error } = await sb.from('orders')
@@ -167,6 +170,7 @@ async function initMyOrdersPage() {
       listEl.innerHTML = `<div class="notice notice-error">${escapeHtml(translateError(error))}</div>`;
       return;
     }
+    data.forEach(o => knownStatus.set(o.id, o.status));
     listEl.innerHTML = data.length ? data.map(orderCardHtml).join('') : `
       <div class="empty-state">
         <div class="empty-icon">📦</div>
@@ -183,7 +187,12 @@ async function initMyOrdersPage() {
     .on('postgres_changes',
       { event: 'UPDATE', schema: 'public', table: 'orders', filter: `user_id=eq.${session.user.id}` },
       payload => {
-        showToast(`คำสั่งซื้อ ${payload.new?.order_number || ''} อัปเดตสถานะเป็น "${ORDER_STATUS[payload.new?.status]?.label || ''}"`, 'success', 5000);
+        const order = payload.new || {};
+        // แถวคำสั่งซื้อถูกแก้ด้วยเหตุอื่นได้ (เช่น บันทึกว่าแจ้ง LINE ร้านแล้ว) — แจ้งเฉพาะเมื่อสถานะเปลี่ยนจริง
+        if (!order.status || knownStatus.get(order.id) === order.status) return;
+        knownStatus.set(order.id, order.status);
+        Sound.play('status');
+        showToast(`คำสั่งซื้อ ${order.order_number || ''} อัปเดตสถานะเป็น "${ORDER_STATUS[order.status]?.label || ''}"`, 'success', 5000);
         load();
       })
     .subscribe();

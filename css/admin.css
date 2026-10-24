@@ -263,3 +263,13 @@ dialog.modal::backdrop { background: rgba(20, 35, 25, .5); }
   transition: transform .3s;
 }
 .admin-sidebar a.side-settings:hover .side-icon { transform: rotate(60deg); }
+
+/* ปุ่มเสียงแจ้งเตือนคำสั่งซื้อใหม่ (แถบบน) */
+.admin-topbar .sound-toggle {
+  flex: none; min-height: 36px; padding: 6px 12px; border-radius: 999px;
+  border: 1.5px solid var(--green-200); background: #fff; color: var(--green-800);
+  font: 600 13px var(--font-head); cursor: pointer; white-space: nowrap;
+}
+.admin-topbar .sound-toggle:hover { background: var(--green-50); }
+.admin-topbar .sound-toggle.needs-tap { border-color: var(--bamboo); background: var(--bamboo-100); }
+@media (max-width: 599px) { .admin-user { display: none; } }

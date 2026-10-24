@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=6">
+  <link rel="stylesheet" href="css/style.css?v=7">
 </head>
 <body>
 
@@ -46,7 +46,10 @@
   </div>
   <div class="account-bar" id="accountBar" hidden>
     <span>เข้าสู่ระบบด้วย <strong id="accountEmail"></strong></span>
-    <button type="button" class="btn btn-ghost btn-sm" id="logoutBtn">ออกจากระบบ</button>
+    <span class="account-actions">
+      <button type="button" class="btn btn-ghost btn-sm sound-toggle" id="soundToggle" data-sound="status">🔔 เสียงเปิด</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="logoutBtn">ออกจากระบบ</button>
+    </span>
   </div>
   <div class="order-list" id="orderList"><div class="loading">กำลังโหลดคำสั่งซื้อ...</div></div>
 </main>
@@ -84,8 +87,8 @@
 </a>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js?v=11"></script>
+<script src="js/supabase.js?v=12"></script>
 <script src="js/cart.js?v=3"></script>
-<script src="js/account.js?v=3"></script>
+<script src="js/account.js?v=4"></script>
 </body>
 </html>

@@ -170,6 +170,84 @@ function configNoticeHtml() {
   </div>`;
 }
 
+/* ---------- เสียงแจ้งเตือน (สร้างด้วย Web Audio ไม่ต้องมีไฟล์เสียง) ---------- */
+
+// เบราว์เซอร์อนุญาตให้เล่นเสียงหลังผู้ใช้แตะ/คลิกหน้าเว็บอย่างน้อย 1 ครั้งเท่านั้น
+const Sound = {
+  ctx: null,
+  KEY: 'bamboo_sound',
+  TONES: {
+    order:  { notes: [784, 988, 1175, 1568], step: 0.13, repeat: 2, gain: 0.32 }, // ออเดอร์ใหม่ (Admin) — ดังและยาวกว่า
+    status: { notes: [880, 1319], step: 0.16, repeat: 1, gain: 0.25 }             // อัปเดตสถานะ (ลูกค้า)
+  },
+
+  enabled() {
+    try { return localStorage.getItem(this.KEY) !== 'off'; } catch { return true; }
+  },
+  setEnabled(on) {
+    try { localStorage.setItem(this.KEY, on ? 'on' : 'off'); } catch { /* storage ไม่พร้อม */ }
+    document.dispatchEvent(new CustomEvent('soundchange'));
+  },
+  ready() { return !!this.ctx && this.ctx.state === 'running'; },
+
+  unlock() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    if (!this.ctx) this.ctx = new AC();
+    if (this.ctx.state === 'suspended') this.ctx.resume().then(() => document.dispatchEvent(new CustomEvent('soundchange')));
+  },
+
+  play(kind = 'status') {
+    if (!this.enabled()) return;
+    if (kind === 'status' && navigator.vibrate) navigator.vibrate([120, 80, 120]);
+    if (!this.ready()) return;
+    const tone = this.TONES[kind] || this.TONES.status;
+    const t0 = this.ctx.currentTime + 0.02;
+    const span = tone.notes.length * tone.step + 0.35;
+    for (let r = 0; r < tone.repeat; r++) {
+      tone.notes.forEach((freq, i) => {
+        const start = t0 + r * span + i * tone.step;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(tone.gain, start + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.45);
+        osc.connect(gain).connect(this.ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.5);
+      });
+    }
+  },
+
+  // ปุ่ม 🔔/🔕 — กดเพื่อเปิด/ปิดเสียง (กดครั้งแรกยังช่วยปลดล็อกเสียงของเบราว์เซอร์ด้วย)
+  bindToggle(btn) {
+    if (!btn) return;
+    const render = () => {
+      const on = this.enabled();
+      const needTap = on && !this.ready();
+      btn.textContent = on ? (needTap ? '🔔 แตะเพื่อเปิดเสียง' : '🔔 เสียงเปิด') : '🔕 เสียงปิด';
+      btn.classList.toggle('is-off', !on);
+      btn.classList.toggle('needs-tap', needTap);
+      btn.setAttribute('aria-pressed', String(on));
+      btn.title = on ? 'กดเพื่อปิดเสียงแจ้งเตือน' : 'กดเพื่อเปิดเสียงแจ้งเตือน';
+    };
+    btn.addEventListener('click', () => {
+      const wasReady = this.ready();
+      this.unlock();
+      // ครั้งแรกที่ยังไม่ปลดล็อก = เปิดเสียง ไม่ใช่ปิด
+      if (this.enabled() && wasReady) this.setEnabled(false);
+      else { this.setEnabled(true); setTimeout(() => this.play(btn.dataset.sound || 'status'), 60); }
+    });
+    document.addEventListener('soundchange', render);
+    render();
+  }
+};
+
+['pointerdown', 'keydown', 'touchstart'].forEach(ev =>
+  document.addEventListener(ev, () => Sound.unlock(), { capture: true, passive: true }));
+
 /* ---------- บัญชีผู้ใช้ (ลูกค้า + Admin ใช้หน้า login.html เดียวกัน) ---------- */
 
 const Auth = {

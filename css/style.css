@@ -557,3 +557,12 @@ body.has-sticky-cart .line-float { bottom: 88px; }
   body.has-sticky-cart .line-float { bottom: 76px; }
   .toast { font-size: 14px; padding: 10px 14px; }
 }
+
+/* ---------- ปุ่มเปิด/ปิดเสียงแจ้งเตือน ---------- */
+.account-actions { display: inline-flex; flex-wrap: wrap; gap: 8px; }
+.sound-toggle.is-off { opacity: .7; }
+.sound-toggle.needs-tap { animation: sound-pulse 1.6s ease-in-out infinite; }
+@keyframes sound-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(169, 129, 74, .5); }
+  50%      { box-shadow: 0 0 0 6px rgba(169, 129, 74, 0); }
+}

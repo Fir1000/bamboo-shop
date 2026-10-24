@@ -57,11 +57,18 @@ function initShell() {
   backdrop?.addEventListener('click', close);
 }
 
+// แจ้งเตือนคำสั่งซื้อใหม่ (เสียง + ข้อความ) ทุกหน้าหลังร้าน — หน้า Dashboard/คำสั่งซื้อส่ง onNew มาเพื่อโหลดรายการใหม่
+let onNewOrder = () => {};
+let orderChannel = null;
+
 function subscribeNewOrders(onNew) {
-  sb.channel('admin-orders')
+  if (onNew) onNewOrder = onNew;
+  if (orderChannel) return;
+  orderChannel = sb.channel('admin-orders')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
-      showToast(`🛒 มีคำสั่งซื้อใหม่ ${payload.new?.order_number || ''}`, 'success', 5000);
-      onNew();
+      Sound.play('order');
+      showToast(`🛒 มีคำสั่งซื้อใหม่ ${payload.new?.order_number || ''}`, 'success', 8000);
+      onNewOrder();
     })
     .subscribe();
 }
@@ -851,4 +858,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error(err);
     showToast(translateError(err), 'error', 5000);
   }
+  Sound.bindToggle(document.getElementById('soundToggle'));
+  subscribeNewOrders();
 });
